@@ -1,8 +1,14 @@
 #include <bits/stdc++.h>
-#define max 1000000000
+#define MAX 1000000000
 using namespace std;
 vector<long long> v;
 namespace fs = std::filesystem;
+int getRandomNumber(int min, int max) {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dist(min, max);
+    return dist(gen);
+}
 class Timer {
     chrono::time_point<chrono::system_clock> begin;
     chrono::time_point<chrono::system_clock> end;
@@ -24,6 +30,8 @@ class Sortings
 
     /// merge_sort, shell_sort, heap_sort, quick_sort, radix_sort(maxx, b)
     int *temp, *fr;
+    Timer t;
+
     void merge_sort(vector <long long> &v, int st, int dr)
     {
         if(st < dr)
@@ -56,17 +64,13 @@ class Sortings
         if(nod != i)
             swap(v[i], v[nod]), heapify(v, n, nod);
     }
-    void Heap_sort(vector <long long> &v, int n = -1, int st = 0)
+    void Heap_sort(vector <long long> &v)
     {
-
-        if(n == -1)
-        n = v.size();
-
-
-        for(int i = n/ 2 - 1; i >= st; i --)
+        int n = v.size();
+        for(int i = n/ 2 - 1; i >= 0; i --)
             heapify(v, n, i);
-        for(int i = n - 1; i > st; i --)
-            swap(v[st], v[i]), heapify(v, i, st);
+        for(int i = n - 1; i > 0; i --)
+            swap(v[0], v[i]), heapify(v, i,0);
     }
     void heapify1(long long v[], int n, int i)
     {
@@ -80,13 +84,10 @@ class Sortings
     }
      void Heap_sort2(vector <long long> &v, int n = -1, int st = 0)
     {
-        long long *p=(long long*)v.data();
+        long long *p=v.data();
         n = n - st;
         p = p + st;
-        if(n == -1)
-        n = v.size();
-
-
+        n++;
         for(int i = n / 2 - 1; i >= 0; i --)
             heapify1(p, n, i);
         for(int i = n - 1; i > 0; i --)
@@ -94,7 +95,7 @@ class Sortings
     }
     void partitie(vector <long long> &v, int &st, int &dr)
     {
-        int poz = st + rand() % (dr - st + 1);
+        int poz = st + getRandomNumber(0,dr-st);
         //int poz = dr;
         int pivot = v[poz], i = st + 1, l = st, r = dr;
         swap(v[st], v[poz]);
@@ -171,11 +172,11 @@ class Sortings
     }
     void Bit_count_sort(vector <long long> &v, long long div, long long b)
     {
-        memset(fr, 0, sizeof(int)*b);
+        memset(fr, 0, sizeof(int)*(1<<b));
         int n = v.size();
         for(int i = 0; i < n; i ++)
             fr[(v[i] >> div) & ((1<<b)-1)] ++;
-        for(int i = 1; i <= b; i ++)
+        for(int i = 1; i < (1<<b); i ++)
             fr[i] += fr[i - 1];
 
         for(int i = n - 1; i >= 0; i --)
@@ -185,7 +186,7 @@ class Sortings
     }
     void Bit_Radix_sort(vector <long long> &v, long long maxx, long long power)
     {
-        for(long long i = 1; 1ll<<i <=maxx; i+=power)
+        for(long long i = 0; (1ll<<i) <=maxx; i+=power)
             Bit_count_sort(v, i, power);
     }
     void stlsort(vector <long long> &v) {
@@ -221,110 +222,107 @@ class Sortings
 
 public:
     Sortings() {
-        temp=new int[max];
+        temp=new int[MAX];
         fr=new int[67000];
     }
-    void stl_sort(vector <long long> v) {
+    float stl_sort(vector <long long> v) {
+        t.startTimer();
+
         stlsort(v);
+        t.endTimer();
+        return t.getElapsedTime();
     }
-    void quick_sort(vector <long long> v)
+    float quick_sort(vector <long long> v)
     {
+        t.startTimer();
+
         quick_sort(v, 0, v.size() - 1);
+        t.endTimer();
+        return t.getElapsedTime();
     }
-    void merge_sort(vector <long long> v)
-    {
+    float merge_sort(vector <long long> v)
+    {        t.startTimer();
+
         merge_sort(v, 0, v.size() - 1);
+
+        t.endTimer();
+        return t.getElapsedTime();
     }
-    void heap_sort(vector <long long> v)
+    float heap_sort(vector <long long> v)
     {
+        t.startTimer();
         Heap_sort(v);
+        t.endTimer();
+        return t.getElapsedTime();
     }
-    void shell_sort(vector <long long> v)
-    {
+
+    float shell_sort(vector <long long> v)
+    {        t.startTimer();
+
         Shell_sort(v);
+
+        t.endTimer();
+        return t.getElapsedTime();
     }
-    void radix_sort(vector <long long> v, long long maxx, long long b)
+    float radix_sort(vector <long long> v, long long b)
     {
-        Radix_sort(v, maxx, b);
+        t.startTimer();
+        long long mx=0;
+        for (long long i:v) {
+            mx=std::max(mx,i);
+        }
+        Radix_sort(v, mx, b);
+
+        t.endTimer();
+        return t.getElapsedTime();
     }
-    void intro_sort(vector <long long> v)
-    {
+    float intro_sort(vector <long long> v)
+    {        t.startTimer();
+
         intro_sort(v, 2 * log2(v.size()), 0, v.size() - 1);
+
+        t.endTimer();
+        return t.getElapsedTime();
     }
-    void bit_Radix_sort(vector <long long> v, long long maxx, long long power) {
-        Bit_Radix_sort(v, maxx, power);
+    float bit_Radix_sort(vector <long long> v, long long power) {
+
+        t.startTimer();
+        long long mx=0;
+        for (long long i:v) {
+            mx=max(mx,i);
+        }
+        Bit_Radix_sort(v, mx, power);
+        t.endTimer();
+        return t.getElapsedTime();
 
     }
 };
 int main()
 {
 
-    vector <long long> v = {100, 99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 84, 83, 82, 81, 80, 79, 78, 77, 76, 75, 74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
     Sortings a;
-
-    Timer t;
-    std::string path = "C:/Users/stefa/CLionProjects/Sortings/sort/Tests";
+    std::string path = "sort/Tests";
     for (const auto & entry : fs::directory_iterator(path)) {
-        int64_t n,mx;
+        int64_t n;
         ifstream input(entry.path());
-        input>>n>>mx;
+        input>>n;
         std::vector<long long> v;
         int x;
         while (input>>x) {
             v.push_back(x);
         }
         cout<<"--------------------------\n";
-        t.startTimer();
-        //a.shell_sort(v);
-        t.endTimer();
-        std::cout<<"shellSort:"<<t.getElapsedTime()<<'\n';
-
-        t.startTimer();
-       // a.quick_sort(v);
-        t.endTimer();
-        std::cout<<"quickSort:"<<t.getElapsedTime()<<'\n';
-
-        t.startTimer();
-      //  a.heap_sort(v);
-        t.endTimer();
-        std::cout<<"heap_sort:"<<t.getElapsedTime()<<'\n';
-
-        t.startTimer();
-       // a.merge_sort(v);
-        t.endTimer();
-        std::cout<<"merge_sort:"<<t.getElapsedTime()<<'\n';
-
-        t.startTimer();
-        a.bit_Radix_sort(v,mx,16);
-        t.endTimer();
-        std::cout<<"bitRadixSort B2^16:"<<t.getElapsedTime()<<'\n';
-
-        t.startTimer();
-        a.radix_sort(v,mx,1<<16);
-        t.endTimer();
-        std::cout<<"radixSort B2^16:"<<t.getElapsedTime()<<'\n';
-
-        t.startTimer();
-        a.radix_sort(v,mx,10);
-        t.endTimer();
-        std::cout<<"radixSort B10:"<<t.getElapsedTime()<<'\n';
-
-        t.startTimer();
-       // a.intro_sort(v);
-        t.endTimer();
-        std::cout<<"introSort:"<<t.getElapsedTime()<<'\n';
-
-        t.startTimer();
-       // a.stl_sort(v);
-        t.endTimer();
-
-        std::cout<<"stlSort:"<<t.getElapsedTime()<<'\n';
-
+        cout<<std::filesystem::path(entry).filename()<<"\n";
         cout<<"--------------------------\n";
+        std::cout<<"shellSort:"<<a.shell_sort(v)<<'\n';
+        std::cout<<"quickSort:"<<a.quick_sort(v)<<'\n';
+        std::cout<<"heap_sort:"<<a.heap_sort(v)<<'\n';
+        std::cout<<"merge_sort:"<<a.merge_sort(v)<<'\n';
+        std::cout<<"bitRadixSort_B2^16:"<<a.bit_Radix_sort(v,16)<<'\n';
+        std::cout<<"radixSort_B2^16:"<<a.radix_sort(v,1<<16)<<'\n';
+        std::cout<<"radixSort_B10:"<<a.radix_sort(v,10)<<'\n';
+        std::cout<<"introSort:"<<a.intro_sort(v)<<'\n';
+        std::cout<<"stlSort:"<<a.stl_sort(v)<<'\n';
     }
-
-   //  a.intro_sort(v);
-   // for(int i = 0; i < v.size(); i ++)
-     //   cout << v[i] <<" ";
     return 0;
 }
