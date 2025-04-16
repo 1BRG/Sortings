@@ -28,7 +28,6 @@ class Timer {
 class Sortings
 {
 
-    /// merge_sort, shell_sort, heap_sort, quick_sort, radix_sort(maxx, b)
     int *temp, *fr;
     Timer t;
 
