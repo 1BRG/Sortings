@@ -19,7 +19,7 @@
 5. reversed(numbers are sorted in reverse order)
 
 
-### Random (used as a base)
+### Random (used as a base) 
 ![img.png](Random.png)
 1. bit Radix Sort 2^16
 2. Radix Sort 2^16
