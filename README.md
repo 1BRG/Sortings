@@ -12,6 +12,7 @@
 | Stl Sort   | O(n log n)         | O(n log n)       | O(1)            |        |
 
 ## We used 5 types of lists
+
 1. random (numbers are random)
 2. Almost Sorted(10% of numbers are in the worng position)
 3. few Uniques (are only 5 unique numbers)
