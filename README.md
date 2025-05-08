@@ -12,11 +12,11 @@
 | Stl Sort   | O(n log n)         | O(n log n)       | O(1)            |        |
 
 ## We used 5 types of lists
-random (numbers are random)
-Almost Sorted(10% of numbers are in the worng position)
-few Uniques (are only 5 unique numbers)
-sorted(numbers are sorted)
-reversed(numbers are sorted in reverse order)
+1. random (numbers are random)
+2. Almost Sorted(10% of numbers are in the worng position)
+3. few Uniques (are only 5 unique numbers)
+4. sorted(numbers are sorted)
+5. reversed(numbers are sorted in reverse order)
 
 
 ### Random (used as a base)
